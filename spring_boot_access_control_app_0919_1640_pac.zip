@@ -1,0 +1,76 @@
+// 代码生成时间: 2025-09-19 16:40:58
+        {
+            "filename": "Application.java",
+            "code": "import org.springframework.boot.SpringApplication;\
+import org.springframework.boot.autoconfigure.SpringBootApplication;\
+@SpringBootApplication\
+public class Application {\
+    public static void main(String[] args) {\
+        SpringApplication.run(Application.class, args);\
+    }\
+}"
+        },
+        {
+# 增强安全性
+            "filename": "UserController.java",
+            "code": "import org.springframework.web.bind.annotation.GetMapping;\
+import org.springframework.web.bind.annotation.RestController;\
+import org.springframework.security.access.prepost.PreAuthorize;\
+@RestController\
+public class UserController {\
+    @GetMapping("/users")\
+# NOTE: 重要实现细节
+    @PreAuthorize("hasRole('ADMIN')")\
+    public String listUsers() {\
+# NOTE: 重要实现细节
+        return "List of users";\
+    }\
+}"
+        },
+        {
+            "filename": "SecurityConfig.java",
+# 改进用户体验
+            "code": "import org.springframework.context.annotation.Bean;\
+import org.springframework.context.annotation.Configuration;\
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;\
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;\
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;\
+import org.springframework.security.crypto.password.PasswordEncoder;\
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;\
+@Configuration\
+@EnableWebSecurity\
+public class SecurityConfig extends WebSecurityConfigurerAdapter {\
+    @Override\
+    protected void configure(HttpSecurity http) throws Exception {\
+# TODO: 优化性能
+        http\
+            .authorizeRequests()\
+                .antMatchers("/**").authenticated()\
+                .and()\
+            .httpBasic();\
+    }\
+    @Bean\
+    public PasswordEncoder passwordEncoder() {\
+        return new BCryptPasswordEncoder();\
+    }\
+}"
+        },
+# 增强安全性
+        {
+            "filename": "GlobalExceptionHandler.java",
+            "code": "import org.springframework.web.bind.annotation.ControllerAdvice;\
+import org.springframework.web.bind.annotation.ExceptionHandler;\
+import org.springframework.web.bind.annotation.ResponseBody;\
+import org.springframework.http.ResponseEntity;\
+import org.springframework.http.HttpStatus;\
+@ControllerAdvice\
+public class GlobalExceptionHandler {\
+    @ExceptionHandler(Exception.class)\
+# 增强安全性
+    @ResponseBody\
+    public ResponseEntity<String> handleException(Exception e) {\
+        return new ResponseEntity<>("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);\
+    }\
+}"
+        }
+    ]
